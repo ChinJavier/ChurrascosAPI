@@ -6,9 +6,6 @@ public static class DbSeeder
 {
     public static void Seed(ApplicationDbContext context)
     {
-        // ======================
-        // 1. Inventario base
-        // ======================
         if (!context.Inventario.Any())
         {
             context.Inventario.AddRange(
@@ -26,9 +23,6 @@ public static class DbSeeder
             );
         }
 
-        // ======================
-        // 2. Recetas base
-        // ======================
         if (!context.ConsumoCarnes.Any())
         {
             context.ConsumoCarnes.AddRange(
@@ -48,9 +42,6 @@ public static class DbSeeder
             );
         }
 
-        // ======================
-        // 3. Dulces típicos (si no existen)
-        // ======================
         if (!context.Dulces.Any())
         {
             context.Dulces.AddRange(
@@ -65,113 +56,46 @@ public static class DbSeeder
             );
         }
 
-
         context.SaveChanges();
 
-        // ======================
-        // 4. Churrascos de ejemplo
-        // ======================
         if (!context.Churrascos.Any())
         {
-            var churrasco1 = new Churrasco
-            {
-                TipoCarne = "Puyazo",
-                Termino = "Tres cuartos",
-                Modalidad = "Familiar",
-                Porciones = 3,
-                TotalPrecio = 95
-            };
+            var g1 = new Guarnicion { Nombre = "Frijoles" };
+            var g2 = new Guarnicion { Nombre = "Tortillas" };
+            var g3 = new Guarnicion { Nombre = "Cebollín" };
+            var g4 = new Guarnicion { Nombre = "Chirmol" };
 
-            var churrasco2 = new Churrasco
-            {
-                TipoCarne = "Costilla",
-                Termino = "Bien cocido",
-                Modalidad = "Familiar",
-                Porciones = 5,
-                TotalPrecio = 135
-            };
+            var churrasco1 = new Churrasco { TipoCarne = "Puyazo", Termino = "Tres cuartos", Modalidad = "Familiar", Porciones = 3, TotalPrecio = 95 };
+            churrasco1.Guarniciones.Add(new ChurrascoGuarnicion { Guarnicion = g1 });
+            churrasco1.Guarniciones.Add(new ChurrascoGuarnicion { Guarnicion = g2 });
+
+            var churrasco2 = new Churrasco { TipoCarne = "Costilla", Termino = "Bien cocido", Modalidad = "Familiar", Porciones = 5, TotalPrecio = 135 };
+            churrasco2.Guarniciones.Add(new ChurrascoGuarnicion { Guarnicion = g3 });
+            churrasco2.Guarniciones.Add(new ChurrascoGuarnicion { Guarnicion = g4 });
 
             context.Churrascos.AddRange(churrasco1, churrasco2);
             context.SaveChanges();
-
-            context.ChurrascoGuarniciones.AddRange(
-                new ChurrascoGuarnicion { ChurrascoId = churrasco1.Id, Guarnicion = new Guarnicion { Nombre = "Frijoles" }, EsExtra = false },
-                new ChurrascoGuarnicion { ChurrascoId = churrasco1.Id, Guarnicion = new Guarnicion { Nombre = "Tortillas" }, EsExtra = false },
-
-                new ChurrascoGuarnicion { ChurrascoId = churrasco2.Id, Guarnicion = new Guarnicion { Nombre = "Cebollín" }, EsExtra = false },
-                new ChurrascoGuarnicion { ChurrascoId = churrasco2.Id, Guarnicion = new Guarnicion { Nombre = "Chirmol" }, EsExtra = false }
-            );
-            context.SaveChanges();
         }
 
-        // ======================
-        // 5. Combo de ejemplo
-        // ======================
         if (!context.Combos.Any())
         {
-            var combo = new Combo
-            {
-                Nombre = "Combo Familiar",
-                Descripcion = "1 churrasco familiar de Puyazo + 1 caja de canillitas",
-                Tipo = "Familiar",
-                PrecioTotal = 110
-            };
-
+            var combo = new Combo { Nombre = "Combo Familiar", Descripcion = "1 churrasco familiar de Puyazo + 1 caja de canillitas", Precio = 110 };
             context.Combos.Add(combo);
             context.SaveChanges();
 
             var churrasco = context.Churrascos.First();
             var dulce = context.Dulces.First();
 
-            context.ComboChurrascos.Add(new ComboChurrasco
-            {
-                ComboId = combo.Id,
-                ChurrascoId = churrasco.Id
-            });
-
-            context.ComboDulces.Add(new ComboDulce
-            {
-                ComboId = combo.Id,
-                DulceTipicoId = dulce.Id,
-                TamañoCaja = 12
-            });
-
+            context.ComboChurrascos.Add(new ComboChurrasco { ComboId = combo.Id, ChurrascoId = churrasco.Id });
+            context.ComboDulces.Add(new ComboDulce { ComboId = combo.Id, DulceTipicoId = dulce.Id, TamañoCaja = 12 });
             context.SaveChanges();
         }
 
-        // ======================
-        // 6. Pedido de prueba
-        // ======================
         if (!context.Pedidos.Any())
         {
-            var pedido = new Pedido
-            {
-                Fecha = DateTime.UtcNow,
-                Tipo = "Combo",
-                Total = 110
-            };
-
-            context.Pedidos.Add(pedido);
-            context.SaveChanges();
-
             var combo = context.Combos.First();
-            var churrasco = context.Churrascos.First();
-            var dulce = context.Dulces.First();
-
-            context.PedidoChurrascos.Add(new PedidoChurrasco
-            {
-                PedidoId = pedido.Id,
-                ChurrascoId = churrasco.Id
-            });
-
-            context.PedidoDulces.Add(new PedidoDulce
-            {
-                PedidoId = pedido.Id,
-                DulceTipicoId = dulce.Id,
-                Cantidad = 1,
-                TamañoCaja = 12
-            });
-
+            var pedido = new Pedido { Tipo = "Combo", Fecha = DateTime.UtcNow, Total = combo.Precio, ComboId = combo.Id, CantidadCombo = 1 };
+            context.Pedidos.Add(pedido);
             context.SaveChanges();
         }
     }

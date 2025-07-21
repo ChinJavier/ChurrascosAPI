@@ -31,7 +31,6 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Claves compuestas
         modelBuilder.Entity<PedidoChurrasco>()
             .HasKey(pc => new { pc.PedidoId, pc.ChurrascoId });
 
@@ -50,7 +49,7 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<ComboChurrasco>()
             .HasOne(cc => cc.Combo)
-            .WithMany(c => c.Churrascos)
+            .WithMany(c => c.ComboChurrascos)
             .HasForeignKey(cc => cc.ComboId);
 
         modelBuilder.Entity<ComboChurrasco>()
@@ -60,7 +59,7 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<ComboDulce>()
             .HasOne(cd => cd.Combo)
-            .WithMany(c => c.Dulces)
+            .WithMany(c => c.ComboDulces)
             .HasForeignKey(cd => cd.ComboId);
 
         modelBuilder.Entity<ComboDulce>()
