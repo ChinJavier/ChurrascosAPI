@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TiendaChurrascosApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,4 +24,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    DbSeeder.Seed(context);
+}
+
 app.Run();
