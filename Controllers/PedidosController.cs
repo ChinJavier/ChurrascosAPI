@@ -1,41 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TiendaChurrascosApi.DTOs;
-using TiendaChurrascosApi.Models;
 using TiendaChurrascosApi.Services;
 
 namespace TiendaChurrascosApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PedidosController : ControllerBase
+public class PedidoController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
     private readonly PedidoService _pedidoService;
 
-    public PedidosController(ApplicationDbContext context, PedidoService pedidoService)
+    public PedidoController(PedidoService pedidoService)
     {
-        _context = context;
         _pedidoService = pedidoService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidos()
-    {
-        return await _context.Pedidos
-            .Include(p => p.Churrascos)
-            .Include(p => p.Dulces)
-            .ToListAsync();
-    }
-
     [HttpPost]
-    public async Task<IActionResult> CrearPedido([FromBody] PedidoDto pedidoDto)
+    public async Task<IActionResult> CrearPedido([FromBody] CrearPedidoDTO dto)
     {
-        var result = await _pedidoService.CrearPedidoAsync(pedidoDto);
+        var resultado = await _pedidoService.CrearPedidoAsync(dto);
 
-        if (!result.Exito)
-            return BadRequest(result.Mensaje);
+        if (!resultado.Exito)
+            return BadRequest(new { mensaje = resultado.Mensaje });
 
-        return Ok(result.Pedido);
+        return Ok(new
+        {
+            mensaje = "Pedido creado exitosamente",
+            pedidoId = resultado.Pedido.Id,
+            total = resultado.Pedido.Total
+        });
     }
 }
