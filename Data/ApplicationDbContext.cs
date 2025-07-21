@@ -7,7 +7,7 @@ public class ApplicationDbContext : DbContext
         : base(options) {}
 
     public DbSet<Churrasco> Churrascos { get; set; }
-    // public DbSet<DulceTipico> Dulces { get; set; }
-    // public DbSet<Combo> Combos { get; set; }
-    // public DbSet<Inventario> Inventario { get; set; }
+    public DbSet<DulceTipico> Dulces { get; set; }
+    public DbSet<Combo> Combos { get; set; }
+    public DbSet<Inventario> Inventario { get; set; }
 }
