@@ -1,5 +1,3 @@
-namespace TiendaChurrascosApi.Models;
-
 public class DulceTipico
 {
     public int Id { get; set; }

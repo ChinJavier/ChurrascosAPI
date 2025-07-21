@@ -1,13 +1,11 @@
-namespace TiendaChurrascosApi.Models;
-
 public class Churrasco
 {
     public int Id { get; set; }
-    public string TipoCarne { get; set; }  // Puyazo, Culotte, Costilla
-    public string Termino { get; set; }    // Término medio, etc.
-    public string Modalidad { get; set; }  // Individual, Familiar
+    public string TipoCarne { get; set; }
+    public string Termino { get; set; }
+    public string Modalidad { get; set; } // Individual / Familiar
     public int Porciones { get; set; }
+    public decimal TotalPrecio { get; set; }
 
-    // Por ahora simplificamos las guarniciones como JSON
-    public List<string> Guarniciones { get; set; } = new();
+    public ICollection<ChurrascoGuarnicion> Guarniciones { get; set; } = new List<ChurrascoGuarnicion>();
 }
